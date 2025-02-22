@@ -96,5 +96,5 @@ The **Financial Management System** is a Django-based web application designed t
 This project is licensed under the MIT License.
 
 ## Contact
-For queries or suggestions, reach out at [your email/contact info].
+For queries or suggestions, reach out at ....
 
