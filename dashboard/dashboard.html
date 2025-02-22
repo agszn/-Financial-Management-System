@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">Dashboard</h2>
+
+    <!-- Row for Charts -->
+    <div class="row">
+        <!-- Expenses Chart -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h5>Expenses Breakdown</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="expensesChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Chart -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h5>Financial Summary</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="summaryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row for Totals -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card text-center bg-primary text-white">
+                <div class="card-body">
+                    <h5>Total Income</h5>
+                    <p class="h4">${{ total_income }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center bg-danger text-white">
+                <div class="card-body">
+                    <h5>Total Expenses</h5>
+                    <p class="h4">${{ total_expenses }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center bg-warning text-dark">
+                <div class="card-body">
+                    <h5>Bills Due</h5>
+                    <p class="h4">${{ total_due }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Expenses Chart
+    const expensesCtx = document.getElementById('expensesChart').getContext('2d');
+    const expensesChart = new Chart(expensesCtx, {
+        type: 'pie',
+        data: {
+            labels: {{ expenses_labels|safe }},
+            datasets: [{
+                label: 'Expenses',
+                data: {{ expenses_values|safe }},
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+            },
+        }
+    });
+
+    // Summary Chart
+    const summaryCtx = document.getElementById('summaryChart').getContext('2d');
+    const summaryChart = new Chart(summaryCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Income', 'Expenses', 'Bills Due'],
+            datasets: [{
+                label: 'Summary',
+                data: [{{ total_income }}, {{ total_expenses }}, {{ total_due }}],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(255, 206, 86, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(255, 206, 86, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+</script>
+{% endblock %}
