@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-primary">Expenses</h2>
+    <a href="{% url 'expense_create' %}" class="btn btn-success mb-3">Add New Expense</a>
+    <ul class="list-group">
+        {% for expense in expenses %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ expense.category }}</strong> - ₹{{ expense.amount }} 
+                    <small class="text-muted">on {{ expense.date }}</small>
+                </div>
+                <div>
+                    <a href="{% url 'expense_update' expense.id %}" class="btn btn-sm btn-primary">Edit</a>
+                    <a href="{% url 'expense_delete' expense.id %}" class="btn btn-sm btn-danger">Delete</a>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+
+{% block index %}
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

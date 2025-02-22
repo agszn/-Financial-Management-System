@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Django App{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome (Icons) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!-- Animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+
+      <style>
+        /* Chatbot Container */
+        #chat-container {
+            display: none; /* Default state: hidden */
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+            width: 350px;
+            max-width: 90%; /* Adjust for smaller screens */
+            height: 500px;
+            background: #ffffff; /* White background */
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); /* Elevated shadow */
+            overflow: hidden;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Chat Log */
+        #chat-log {
+            overflow-y: auto;
+            padding: 15px;
+            flex-grow: 1; /* Fill available space */
+            background-color: #f9f9f9; /* Light background */
+        }
+        
+        /* Chat Controls */
+        .chat-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #f1f1f1; /* Gray background for controls */
+            border-top: 1px solid #ddd;
+            gap: 10px;
+        }
+        
+        .chat-controls input {
+            flex-grow: 1;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 14px;
+        }
+        
+        .chat-controls button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .chat-controls button:hover {
+            background-color: #0056b3;
+        }
+        
+        /* Messages */
+        .message {
+            margin: 8px 0;
+            padding: 10px 15px;
+            max-width: 70%;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .user-message {
+            background-color: #007bff;
+            color: white;
+            align-self: flex-end;
+            border-top-right-radius: 0px;
+        }
+        
+        .bot-message {
+            background-color: #f1f1f1;
+            color: black;
+            align-self: flex-start;
+            border-top-left-radius: 0px;
+        }
+        
+        /* Toggle Button */
+        #toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #28a745; /* Green background */
+            color: white;
+            border: none;
+            border-radius: 50%; /* Circular button */
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        
+        #toggle-btn:hover {
+            background-color: #218838; /* Darker green on hover */
+            transform: scale(1.1); /* Slight zoom effect */
+        }
+        
+        /* Chat Buttons (Quick Replies) */
+        .chat-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .chat-btn {
+            flex-grow: 1;
+            padding: 8px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .chat-btn:hover {
+            background-color: #0056b3;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #chat-container {
+                width: 90%;
+                height: 70%;
+                bottom: 20px;
+                right: 10px;
+            }
+        
+            #toggle-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+        
+            .chat-controls input {
+                font-size: 12px;
+            }
+        
+            .chat-controls {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                gap: 10px;
+            }
+            .chat-btn {
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+            
+        }
+        
+    </style>
+
+    {% block style %}
+    <style>
+        /* 3D effect for title */
+        .project-title {
+            font-size: 3rem;
+            font-weight: bold;
+            text-align: center;
+            color: #4CAF50;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+            animation: bounceInDown 1.5s;
+        }
+
+        /* Hover effects for buttons */
+        .btn-3d {
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-3d:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Slider image animations */
+        .carousel-item img {
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-item:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Section heading animations */
+        h2 {
+            animation: fadeInUp 1.5s;
+        }
+
+        /* Chat container animations */
+        .chat-container {
+            animation: slideInUp 0.8s;
+        }
+
+        /* 3D cards for key features */
+        .feature-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+    {% endblock %}
+    
+
+</head>
+<body>
+    <header>
+        {% block header %}
+        {% include 'header/header.html' %}
+        {% endblock %}
+    </header>
+    
+    <nav>
+        {% block navbar %}
+        {% include 'navigation/navigation.html' %}
+        {% endblock %}
+    </nav>
+
+
+    {% block content %}
+
+        {% block index %}
+        {% include 'index/index.html' %}
+        {% endblock %}
+
+
+    {% endblock %}
+
+    <div id="chat-container" style="display: none;">
+        <div id="chat-log" class="chat-log">
+            <!-- Chat messages will appear here -->
+        </div>
+        <div class="chat-controls">
+            <button id="mic-btn"><i class="fas fa-microphone"></i></button>
+            <!-- Financial-related buttons -->
+            <button class="chat-btn" data-message="Where to invest?">Where to invest?</button>
+            <button class="chat-btn" data-message="How to invest?">How to invest?</button>
+            <button class="chat-btn" data-message="What is SIP?">What is SIP?</button>
+            <button class="chat-btn" data-message="What are bonds?">What are bonds?</button>
+            <button class="chat-btn" data-message="What are stocks?">What are stocks?</button>
+            <button class="chat-btn" data-message="Tips on savings">Tips on savings</button>
+            <button class="chat-btn" data-message="What are returns?">What are returns?</button>
+            
+            <!-- New financial tracking buttons -->
+            <button class="chat-btn" data-message="What is my income?">What is my income?</button>
+            <button class="chat-btn" data-message="What is my expense?">What is my expense?</button>
+            <button class="chat-btn" data-message="What is my budget?">What is my budget?</button>
+            <button class="chat-btn" data-message="What are my bills?">What are my bills?</button>
+            <button class="chat-btn" data-message="Which bills are due?">Which bills are due?</button>
+            <button class="chat-btn" data-message="Which income sources do I have?">Which income sources do I have?</button>
+            <button class="chat-btn" data-message="which bills are due">What is the due date for my bills?</button>
+        </div>
+    </div>
+    <button id="toggle-btn"><i class="fas fa-chevron-up"></i> Chat</button>
+
+    <script>
+        // When user clicks a button, send the message to the server
+        document.querySelectorAll('.chat-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const userMessage = this.getAttribute('data-message');
+                sendMessage(userMessage);
+            });
+        });
+
+    
+        // Function to send the message to the chatbot
+        function sendMessage(message) {
+            const chatLog = document.getElementById('chat-log');
+
+            // Append the user's message to the chat log
+            chatLog.innerHTML += `<div class="message user-message"><strong>You:</strong> ${message}</div>`;
+            
+            // Make a GET request to the chatbot endpoint
+            fetch(`/chatbot?message=${encodeURIComponent(message)}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Extract the bot's response from the JSON
+                    const botResponse = data.response;
+
+                    // Append the bot's response to the chat log
+                    chatLog.innerHTML += `<div class="message bot-message"><strong>Bot:</strong> ${botResponse}</div>`;
+                    
+                    // Optional: Voice output for the bot's response
+                    speak(botResponse);
+
+                    // Scroll to the bottom of the chat log
+                    chatLog.scrollTop = chatLog.scrollHeight;
+                })
+                .catch(error => {
+                    console.error("Error communicating with the chatbot:", error);
+                    chatLog.innerHTML += `<div class="message bot-message"><strong>Bot:</strong> Sorry, something went wrong. Please try again later.</div>`;
+                });
+        }
+
+        // Function to convert text to speech (optional)
+        function speak(text) {
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.lang = "en-US"; // Adjust language as needed
+            window.speechSynthesis.speak(speech);
+        }
+
+        // Toggle the visibility of the chatbot
+        document.getElementById('toggle-btn').addEventListener('click', function() {
+            const chatContainer = document.getElementById('chat-container');
+            const toggleButton = document.getElementById('toggle-btn');
+            
+            if (chatContainer.style.display === 'none') {
+                chatContainer.style.display = 'block';
+                toggleButton.innerHTML = '<i class="fas fa-chevron-down"></i>';
+            } else {
+                chatContainer.style.display = 'none';
+                toggleButton.innerHTML = '<i class="fas fa-chevron-up"></i>';
+            }
+        });
+
+        // Speech input functionality (using SpeechRecognition API)
+        const micBtn = document.getElementById('mic-btn');
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+        recognition.continuous = false;
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+
+        micBtn.addEventListener('click', function() {
+            recognition.start();
+        });
+
+        recognition.onresult = function(event) {
+            const userMessage = event.results[0][0].transcript;
+            sendMessage(userMessage);
+        };
+
+        recognition.onerror = function(event) {
+            console.error("Error occurred in recognition: ", event.error);
+        };
+    </script>
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+
+    <!-- Custom Scripts -->
+    {% block scripts %}
+    {% endblock %}
+
+    {% comment %} index js {% endcomment %}
+      <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+  <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+
+  <!-- Main JS File -->
+  <script src="{% static 'assets/js/main.js' %}"></script>
+
+</body>
+</html>

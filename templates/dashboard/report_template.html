@@ -1,0 +1,23 @@
+<html>
+<head>
+    <title>Financial Dashboard Report</title>
+</head>
+<body>
+    <h1>Financial Dashboard Report</h1>
+    <p><strong>User:</strong> {{ user.username }}</p>
+    <p><strong>Total Income:</strong> {{ total_income }}</p>
+    <p><strong>Total Expenses:</strong> {{ total_expenses }}</p>
+    <p><strong>Bills Due:</strong> {{ bills_due }}</p>
+    <p><strong>Paid Bills:</strong> {{ paid_bills }}</p>
+    <p><strong>Monthly Budget:</strong> {{ monthly_budget }}</p>
+    <p><strong>Remaining Budget:</strong> {{ remaining_budget }}</p>
+    <p><strong>In-Balance Budget:</strong> {{ in_balance_budget }}</p>
+
+    <h2>Expense Breakdown</h2>
+    <ul>
+        {% for category, total in expense_data %}
+        <li>{{ category }}: {{ total }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

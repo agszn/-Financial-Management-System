@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Blacklisted IPs{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Blacklisted IPs</h2>
+    <div class="list-group">
+        {% if blacklist %}
+            {% for credit_card_number in blacklist %}
+                <div class="list-group-item">
+                    <p><strong>Credit Card Number:</strong> {{ credit_card_number.credit_card_number }}</p>
+                    <p><strong>Reason:</strong> {{ credit_card_number.reason }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">No blacklisted IPs available.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

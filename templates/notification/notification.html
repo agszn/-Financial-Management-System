@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Notifications{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Admin Notifications</h2>
+    <div class="list-group">
+        {% for notification in notifications %}
+            <a href="{% url 'transaction_detail' notification.transaction.id %}" class="list-group-item list-group-item-action">
+                <p><strong>{{ notification.message }}</strong></p>
+                <small>{{ notification.created_at|date:"d M Y H:i" }}</small>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Fraud Alerts{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Fraud Alerts</h2>
+    <div class="list-group">
+        {% if alerts %}
+            {% for alert in alerts %}
+                <div class="list-group-item">
+                    <p><strong>Transaction ID:</strong> {{ alert.transaction.id }}</p>
+                    <p><strong>Message:</strong> {{ alert.message }}</p>
+                    <p><strong>Date:</strong> {{ alert.created_at|date:"d M Y, H:i" }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">No fraud alerts available.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

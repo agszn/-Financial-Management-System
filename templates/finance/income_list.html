@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h2>Incomes</h2>
+    <a href="{% url 'income_create' %}" class="btn btn-primary mb-3">Add Income</a>
+    <ul class="list-group">
+        {% for income in incomes %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ income.source }} - ₹{{ income.amount }} on {{ income.date }}
+            <div>
+                <a href="{% url 'income_update' income.id %}" class="btn btn-warning btn-sm">Edit</a>
+                <form method="POST" action="{% url 'income_delete' income.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

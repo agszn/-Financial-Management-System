@@ -1,0 +1,95 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <div class="container">
+        <!-- Brand -->
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <i class="fas fa-home"></i> Home
+        </a>
+
+        <!-- Toggle Button for Mobile View -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Collapsible Menu -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <!-- Profile Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle"></i> Profile
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="{% url 'profile' %}">My Profile</a></li>
+                            {% comment %} <li><a class="dropdown-item" href="{% url 'profile' %}">Settings</a></li> {% endcomment %}
+                            <li>
+                                <form method="POST" action="{% url 'logout' %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Dashboard Link -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+
+                    <!-- Income Link -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'income_list' %}">
+                            <i class="fas fa-dollar-sign"></i> Income
+                        </a>
+                    </li>
+
+                    <!-- Bill Payment Link -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'bill_list' %}">
+                            <i class="fas fa-file-invoice-dollar"></i> Bills
+                        </a>
+                    </li>
+
+                    <!-- Expense Link -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'expense_list' %}">
+                            <i class="fas fa-wallet"></i> Expenses
+                        </a>
+                    </li>
+
+                    <!-- Manage Budget -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'manage_budget' %}">
+                            <i class="fas fa-money-bill-wave"></i> Manage Budget
+                        </a>
+                    </li>
+
+                    
+                    <form method="POST" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="text-danger">
+                            Logout
+                        </button>
+                    </form>
+                {% else %}
+                    
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">
+                            <i class="fas fa-user-plus"></i> Register
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+
+{% block style %}
+<style>
+    /* Hover zoom effect */
+    .hover-zoom {
+        transition: transform 0.3s ease; /* Smooth transition */
+        cursor: pointer; /* Show pointer cursor on hover */
+    }
+    
+    .hover-zoom:hover {
+        transform: scale(2.1); /* Zoom in by 10% */
+    }
+    
+</style>
+{% endblock %}
+{% block content %}
+
+    {% if request.user.is_authenticated %}
+        {% if user.is_superuser %}
+            <div class="container mt-5">
+                <h2 class="text-center">Transaction Dashboard</h2>
+            
+                 
+                <div class="container mt-4">
+                    <div class="row">
+                        <!-- Transactions by Date -->
+                        <div class="col-md-4">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h4 class="card-title">Transactions by Date</h4>
+                                    <img src="{{ graph_paths.transaction_graph }}" alt="Transactions by Date" class="img-fluid hover-zoom">
+                                </div>
+                            </div>
+                        </div>
+                
+                        <!-- Flagged Transactions by Date -->
+                        <div class="col-md-4">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h4 class="card-title">Flagged Transactions by Date</h4>
+                                    <img src="{{ graph_paths.flagged_graph }}" alt="Flagged Transactions by Date" class="img-fluid hover-zoom">
+                                </div>
+                            </div>
+                        </div>
+                
+                        <!-- Fraud Alerts by Date -->
+                        <div class="col-md-4">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h4 class="card-title">Fraud Alerts by Date</h4>
+                                    <img src="{{ graph_paths.alert_graph }}" alt="Fraud Alerts by Date" class="img-fluid hover-zoom">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+        {% else %}
+            <div class="container mt-4">
+                <h2 class="mb-4 text-center">Financial Dashboard</h2>
+
+                <!-- Summary Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-center bg-primary text-white shadow">
+                            <div class="card-body">
+                                <h5>Total Income</h5>
+                                <p class="h4">₹{{ total_income }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center bg-danger text-white shadow">
+                            <div class="card-body">
+                                <h5>Total Expenses</h5>
+                                <p class="h4">₹{{ total_expenses }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center bg-warning text-dark shadow">
+                            <div class="card-body">
+                                <h5>Bills Due</h5>
+                                <p class="h4">₹{{ bills_due }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center bg-success text-white shadow">
+                            <div class="card-body">
+                                <h5>Remaining Budget</h5>
+                                <p class="h4">₹{{ remaining_budget }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Graphs -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card shadow">
+                            <div class="card-header text-center">
+                                <h5>Expense Breakdown</h5>
+                            </div>
+                            <div class="card-body">
+                                {% for category, total in expense_data %}
+                                    <h6 class="text-capitalize">{{ category }}</h6>
+                                    <div class="progress mb-3">
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ total|floatformat:2 }}%;" aria-valuenow="{{ total }}" aria-valuemin="0" aria-valuemax="100">₹{{ total }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card shadow">
+                            <div class="card-header text-center">
+                                <h5>Income vs Expenses</h5>
+                            </div>
+                            <div class="card-body">
+                                <h6>Income</h6>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ income_percentage }}%;" aria-valuenow="{{ income_percentage }}" aria-valuemin="0" aria-valuemax="100">₹{{ total_income }}</div>
+                                </div>
+                                <h6>Expenses</h6>
+                                <div class="progress">
+                                    <div class="progress-bar bg-danger" role="progressbar" style="width: {{ expense_percentage }}%;" aria-valuenow="{{ expense_percentage }}" aria-valuemin="0" aria-valuemax="100">₹{{ total_expenses }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card shadow">
+                            <div class="card-header text-center">
+                                <h5>Bill Payments</h5>
+                            </div>
+                            <div class="card-body">
+                                <h6>Bills Paid</h6>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ paid_percentage }}%;" aria-valuenow="{{ paid_percentage }}" aria-valuemin="0" aria-valuemax="100">₹{{ paid_bills }}</div>
+                                </div>
+                                <h6>Bills Due</h6>
+                                <div class="progress">
+                                    <div class="progress-bar bg-warning" role="progressbar" style="width: {{ due_percentage }}%;" aria-valuenow="{{ due_percentage }}" aria-valuemin="0" aria-valuemax="100">₹{{ bills_due }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card shadow">
+                            <div class="card-header text-center">
+                                <h5>Budget Overview</h5>
+                            </div>
+                            <div class="card-body">
+                                <h6>Budget Used</h6>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-secondary" role="progressbar" style="width: {{ used_budget_percentage }}%;" aria-valuenow="{{ used_budget_percentage }}" aria-valuemin="0" aria-valuemax="100">₹{{ total_expenses }}</div>
+                                </div>
+                                <!-- <h6>Paid Bills</h6>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-secondary" role="progressbar" style="width: {{ paid_bills }}%;" aria-valuenow="{{ used_budget_percentage }}" aria-valuemin="0" aria-valuemax="100">₹{{ total_expenses }}</div>
+                                </div> -->
+                                <h6>Remaining Budget</h6>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ remaining_budget_percentage }}%;" aria-valuenow="{{ remaining_budget_percentage }}" aria-valuemin="0" aria-valuemax="100">₹{{ remaining_budget }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+    {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Chart.js for Transactions by Date
+    var ctx = document.getElementById('transactionChart').getContext('2d');
+    var transactionChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ dates|safe }},
+            datasets: [{
+                label: 'Number of Transactions',
+                data: {{ counts|safe }},
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                fill: true,
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Number of Transactions'
+                    }
+                }
+            }
+        }
+    });
+
+    // Chart.js for Flagged Transactions by Date
+    var ctxFlagged = document.getElementById('flaggedChart').getContext('2d');
+    var flaggedChart = new Chart(ctxFlagged, {
+        type: 'line',
+        data: {
+            labels: {{ flagged_dates|safe }},
+            datasets: [{
+                label: 'Flagged Transactions',
+                data: {{ flagged_count|safe }},
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                fill: true,
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Number of Flagged Transactions'
+                    }
+                }
+            }
+        }
+    });
+
+    // Chart.js for Fraud Alerts by Date
+    var ctxAlert = document.getElementById('alertChart').getContext('2d');
+    var alertChart = new Chart(ctxAlert, {
+        type: 'line',
+        data: {
+            labels: {{ alert_dates|safe }},
+            datasets: [{
+                label: 'Fraud Alerts',
+                data: {{ alert_counts|safe }},
+                borderColor: 'rgba(153, 102, 255, 1)',
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                fill: true,
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Number of Fraud Alerts'
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,126 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <div class="container">
+        <!-- Brand -->
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-home"></i> Home
+        </a>
+
+        <!-- Collapsible Menu -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    {% if user.is_superuser %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'transaction_list' %}">
+                                Transaction List
+                            </a>
+                        </li>
+
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_notifications' %}">
+                               Notifications
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'fraud_alerts' %}">
+                                 Fraud Alerts
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'blacklisted_credit_card_number' %}">
+                                 Blacklisted CreditCards
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboardA' %}">
+                                Dashboard
+                            </a>
+                        </li>
+                        
+                    {% else %}
+                        <!-- Profile Dropdown -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'profile' %}">
+                                <i class="fas fa-tachometer-alt"></i> Profile
+                            </a>
+                        </li>
+
+                        <!-- Dashboard Link -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard' %}">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+
+                        <!-- Income Link -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'income_list' %}">
+                                <i class="fas fa-dollar-sign"></i> Income
+                            </a>
+                        </li>
+
+                        <!-- Bill Payment Link -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'bill_list' %}">
+                                <i class="fas fa-file-invoice-dollar"></i> Bills
+                            </a>
+                        </li>
+
+                        <!-- Expense Link -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'expense_list' %}">
+                                <i class="fas fa-wallet"></i> Expenses
+                            </a>
+                        </li>
+
+                        <!-- Manage Budget -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'manage_budget' %}">
+                                <i class="fas fa-money-bill-wave"></i> Manage Budget
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'transaction_create' %}">
+                                <i class="fas fa-money-bill-wave"></i> Transaction
+                            </a>
+                        </li>
+
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'view_transactions' %}">
+                                <i class="fas fa-history"></i> My Transactions
+                            </a>
+                        </li>
+                        
+
+
+                    {% endif %}
+                    <!-- Logout Button -->
+                    <form method="POST" action="{% url 'logout' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="text-danger btn btn-link">
+                            Logout
+                        </button>
+                    </form>
+                {% else %}
+                    <!-- Links for unauthenticated users -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">
+                            <i class="fas fa-user-plus"></i> Register
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

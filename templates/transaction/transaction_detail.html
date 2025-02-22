@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Transaction Details</h2>
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Transaction ID: {{ transaction.id }}</h5>
+            <p><strong>Amount:</strong> {{ transaction.amount }}</p>
+            <p><strong>Location:</strong> {{ transaction.location }}</p>
+            <p><strong>Credit Card Number:</strong> {{ transaction.credit_card_number }}</p>
+            <p><strong>Date:</strong> {{ transaction.date|date:"d M Y H:i" }}</p>
+            <p><strong>Risk Score:</strong> {{ transaction.risk_score }}</p>
+            <p><strong>Flagged:</strong> {{ transaction.flagged|yesno:"Yes,No" }}</p>
+        </div>
+    </div>
+    <a href="{% url 'transaction_list' %}" class="btn btn-primary mt-3">Back to Transactions</a>
+</div>
+{% endblock %}

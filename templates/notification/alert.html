@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Fraud Alert{% endblock %}
+
+{% block content %}
+<div class="alert alert-danger text-center mt-5">
+    <h2>Fraud Alert!</h2>
+    <p>Suspicious activity has been detected. Alerting Admin.</p>
+    {% comment %} <a href="{% url 'admin_dashboard' %}" class="btn btn-primary">Go to Admin Dashboard</a> {% endcomment %}
+</div>
+{% endblock %}

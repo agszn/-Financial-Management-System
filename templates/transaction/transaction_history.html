@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block content %}
+{% for transaction in transactions %}
+    <p>Amount: {{ transaction.amount }} | Location: {{ transaction.location }} | Date: {{ transaction.timestamp }}</p>
+{% endfor %}
+
+{% endblock %}

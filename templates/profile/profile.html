@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block content %}
+<div class="container mt-4">
+    <h2>My Profile</h2>
+    <div class="row">
+
+        <!-- Display Profile Picture -->
+        <div class="col-md-4 text-center">
+            {% if user.profile.profile_picture %}
+                <img src="{{ user.profile.profile_picture.url }}" class="img-thumbnail" alt="Profile Picture">
+            {% else %}
+                <img src="{% static 'profile_pics/default.jpg' %}" class="img-thumbnail" alt="Default Profile Picture">
+            {% endif %}
+
+            <p class="text-muted mt-2">Current Profile Picture</p>
+        </div>
+
+        <!-- Form for Editing Profile -->
+        <div class="col-md-8">
+            <h3>Edit Your Profile</h3>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- User Information -->
+                <div class="form-group">
+                    <h4>User Information</h4>
+                    {{ user_form.as_p }}
+                </div>
+                
+                <!-- Profile Information -->
+                <div class="form-group">
+                    <h4>Profile Information</h4>
+                    {{ profile_form.as_p }}
+                </div>
+
+                <!-- Error Handling: Display form errors -->
+                {% if user_form.errors %}
+                <div class="alert alert-danger">
+                    <strong>There are errors in your form!</strong>
+                    <ul>
+                        {% for field in user_form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
+                {% if profile_form.errors %}
+                <div class="alert alert-danger">
+                    <strong>There are errors in your profile form!</strong>
+                    <ul>
+                        {% for field in profile_form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+            </form>
+
+            <!-- Success Message -->
+            {% if messages %}
+            <div class="alert alert-success mt-3">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Account Actions: Delete Account and Reset Password -->
+    <div class="row mt-5">
+        <div class="col-md-8">
+            <h4>Account Settings</h4>
+            
+            <!-- Reset Password Link -->
+            <a href="{% url 'password_reset' %}" class="btn btn-warning">Reset Password</a>
+
+            <!-- Delete Account Form -->
+            <form method="POST" action="{% url 'delete_account' %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger mt-2">Delete Account</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

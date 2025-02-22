@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Add Expense</h2>
+    <form method="post" class="shadow p-4 bg-light rounded">
+        {% csrf_token %}
+        
+        <!-- Render the form fields -->
+        <div class="form-group">
+            {{ form.category }}
+        </div>
+        <div class="form-group">
+            {{ form.description }}
+        </div>
+        <div class="form-group">
+            {{ form.amount }}
+        </div>
+        <div class="form-group">
+            {{ form.date }}
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-success btn-lg">Save</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block index %}
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

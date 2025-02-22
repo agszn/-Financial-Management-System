@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+  <h1 class="text-center mb-4">Manage Budget</h1>
+
+  <!-- Budget Form -->
+  <div class="card shadow mb-4">
+    <div class="card-body">
+      <form method="POST" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="monthly_budget" class="form-label">Set Monthly Budget:</label>
+          <input 
+            type="number" 
+            step="0.01" 
+            name="monthly_budget" 
+            id="monthly_budget" 
+            class="form-control"
+            value="{{ budget.monthly_budget }}" 
+            required
+          >
+          <div class="invalid-feedback">
+            Please provide a valid budget amount.
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Budget Summary -->
+  <div class="card shadow">
+    <div class="card-header text-white bg-primary">
+      <h2 class="mb-0">Current Month's Budget Summary</h2>
+    </div>
+    <div class="card-body">
+      <p class="mb-1"><strong>Total Expenses:</strong> ₹{{ total_expenses }}</p>
+      <p class="mb-1"><strong>Remaining Budget:</strong> ₹{{ remaining_budget }}</p>
+      {% if is_exceeded %}
+        <p class="text-danger mt-3"><strong>Budget Exceeded!</strong> Please review your expenses.</p>
+      {% else %}
+        <p class="text-success mt-3"><strong>You're within budget!</strong> Keep it up!</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
